@@ -607,7 +607,7 @@
 
     <div class="stats-row">
       <span>📝 20 questões</span>
-      <span>⏱ Sem limite de tempo</span>
+      <span>⏱ 30s por questão</span>
       <span>📚 Nível médio–avançado</span>
     </div>
   </section>
@@ -728,7 +728,7 @@ const questions = [
     sentence: "A cidade foi destruída pelo terremoto.",
     options: ["A cidade", "foi destruída", "pelo terremoto", "terremoto"],
     correct: 2,
-    explanation: "<strong>Agente da passiva</strong> é o complemento nominal do verbo na voz passiva — indica quem pratica a ação sobre o sujeito paciente. É introduzido pelas preposições <em>por, pelo, pela, pelos, pelas</em>."
+    explanation: "<strong>Agente da passiva</strong> é um termo da oração que indica o ser que pratica a ação expressa pelo verbo na voz passiva. É sempre introduzido pelas preposições <em>por, pelo, pela, pelos, pelas</em> (e raramente <em>de</em>). Não confunda com complemento nominal — este completa nomes, não verbos."
   },
   {
     category: "OBJETO DIRETO",
@@ -1088,13 +1088,4 @@ function toggleReview() {
   const list = document.getElementById('review-list');
   list.classList.toggle('open');
   if (list.classList.contains('open')) {
-    list.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-function goHome() {
-  showScreen('screen-home');
-}
-</script>
-</body>
-</html>
+    list.scrollIntoView({ behavior: 'smooth', block: 'star
