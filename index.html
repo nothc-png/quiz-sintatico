@@ -1088,4 +1088,13 @@ function toggleReview() {
   const list = document.getElementById('review-list');
   list.classList.toggle('open');
   if (list.classList.contains('open')) {
-    list.scrollIntoView({ behavior: 'smooth', block: 'star
+    list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function goHome() {
+  showScreen('screen-home');
+}
+</script>
+</body>
+</html>
