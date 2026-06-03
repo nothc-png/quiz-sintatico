@@ -219,6 +219,42 @@
     color: var(--gold);
   }
 
+  /* TIMER */
+  .timer-wrap {
+    width: 100%;
+    max-width: 760px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .timer-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 38px;
+    transition: color 0.3s;
+  }
+  .timer-label.danger { color: #e05555; animation: pulse 0.6s infinite alternate; }
+  @keyframes pulse { from { opacity:1; } to { opacity:0.5; } }
+  .timer-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .timer-fill {
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(to right, var(--gold-dim), var(--gold));
+    transition: width 1s linear, background 0.5s;
+  }
+  .timer-fill.danger {
+    background: linear-gradient(to right, #8b0000, #e05555);
+  }
+
   .progress-bar {
     height: 3px;
     background: var(--border);
@@ -589,6 +625,11 @@
       <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:5%"></div></div>
     </div>
 
+    <div class="timer-wrap">
+      <span class="timer-label" id="timer-label">30</span>
+      <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+    </div>
+
     <div class="question-card" id="question-card">
       <div class="q-category" id="q-category">CATEGORIA</div>
       <div class="q-text" id="q-text">Pergunta aqui</div>
@@ -827,18 +868,77 @@ let current = 0;
 let score = 0;
 let answers = [];
 let shuffled = [];
+let timerInterval = null;
+let timeLeft = 30;
+const TIME_LIMIT = 30;
 
 function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
+}
+
+// Randomiza as alternativas mantendo rastreio da correta
+function shuffleOptions(q) {
+  const indexed = q.options.map((opt, i) => ({ opt, orig: i }));
+  const shuffledOpts = shuffle(indexed);
+  return {
+    ...q,
+    options: shuffledOpts.map(o => o.opt),
+    correct: shuffledOpts.findIndex(o => o.orig === q.correct)
+  };
 }
 
 function startQuiz() {
   current = 0;
   score = 0;
   answers = [];
-  shuffled = shuffle(questions);
+  shuffled = shuffle(questions).map(shuffleOptions);
   showScreen('screen-quiz');
   renderQuestion();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = TIME_LIMIT;
+  updateTimerUI();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timeExpired();
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const label = document.getElementById('timer-label');
+  const fill = document.getElementById('timer-fill');
+  label.textContent = timeLeft;
+  fill.style.width = (timeLeft / TIME_LIMIT * 100) + '%';
+  const danger = timeLeft <= 8;
+  label.className = 'timer-label' + (danger ? ' danger' : '');
+  fill.className = 'timer-fill' + (danger ? ' danger' : '');
+}
+
+function timeExpired() {
+  // Trata como resposta errada
+  const q = shuffled[current];
+  answers.push(false);
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.disabled = true);
+  buttons[q.correct].classList.add('correct');
+
+  const panel = document.getElementById('feedback-panel');
+  const title = document.getElementById('feedback-title');
+  const body = document.getElementById('feedback-body');
+  panel.className = 'feedback-panel nok show';
+  title.innerHTML = '⏰ Tempo esgotado!';
+  body.innerHTML = q.explanation;
+  document.getElementById('btn-next').className = 'btn-next show';
+
+  // Update streak dot
+  const dots = document.querySelectorAll('.streak-dot');
+  if (dots[current]) dots[current].className = 'streak-dot nok';
 }
 
 function showScreen(id) {
@@ -878,6 +978,8 @@ function renderQuestion() {
   document.getElementById('feedback-panel').className = 'feedback-panel';
   document.getElementById('btn-next').className = 'btn-next';
 
+  startTimer();
+
   // Streak bar
   const bar = document.getElementById('streak-bar');
   bar.innerHTML = '';
@@ -889,6 +991,7 @@ function renderQuestion() {
 }
 
 function selectAnswer(idx) {
+  clearInterval(timerInterval);
   const q = shuffled[current];
   const buttons = document.querySelectorAll('.option-btn');
   buttons.forEach(b => b.disabled = true);
@@ -924,6 +1027,7 @@ function selectAnswer(idx) {
 }
 
 function nextQuestion() {
+  clearInterval(timerInterval);
   current++;
   if (current >= shuffled.length) {
     showResults();
@@ -939,6 +1043,7 @@ function nextQuestion() {
 }
 
 function showResults() {
+  clearInterval(timerInterval);
   showScreen('screen-result');
   const total = shuffled.length;
   const correct = answers.filter(Boolean).length;
