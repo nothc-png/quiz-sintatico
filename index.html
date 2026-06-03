@@ -593,14 +593,14 @@
     <div class="divider"><span class="divider-icon">✦</span></div>
 
     <div class="topics-grid">
-      <div class="topic-badge"><span class="dot"></span>Sujeito & Predicado</div>
+      <div class="topic-badge"><span class="dot"></span>Sujeito Simples e Composto</div>
+      <div class="topic-badge"><span class="dot"></span>Sujeito Oculto e Indeterminado</div>
+      <div class="topic-badge"><span class="dot"></span>Predicado Verbal e Nominal</div>
+      <div class="topic-badge"><span class="dot"></span>Predicado Verbo-nominal</div>
       <div class="topic-badge"><span class="dot"></span>Objeto Direto e Indireto</div>
+      <div class="topic-badge"><span class="dot"></span>Adjunto Adnominal e Adverbial</div>
       <div class="topic-badge"><span class="dot"></span>Voz Ativa e Passiva</div>
-      <div class="topic-badge"><span class="dot"></span>Complemento Nominal</div>
-      <div class="topic-badge"><span class="dot"></span>Adjunto Adnominal</div>
-      <div class="topic-badge"><span class="dot"></span>Adjunto Adverbial</div>
       <div class="topic-badge"><span class="dot"></span>Agente da Passiva</div>
-      <div class="topic-badge"><span class="dot"></span>Predicativo do Sujeito</div>
     </div>
 
     <button class="btn-start" onclick="startQuiz()">Iniciar Quiz</button>
@@ -608,7 +608,7 @@
     <div class="stats-row">
       <span>📝 20 questões</span>
       <span>⏱ 30s por questão</span>
-      <span>📚 Nível médio–avançado</span>
+      <span>📚 8º ano do Ensino Fundamental</span>
     </div>
   </section>
 
@@ -672,140 +672,64 @@
 
 <script>
 const questions = [
+  // ── SUJEITO ──────────────────────────────────────────
   {
     category: "SUJEITO",
-    text: "Qual é o sujeito da oração a seguir?",
+    text: "Qual é o sujeito da oração?",
     sentence: "Os alunos estudaram muito para a prova.",
     options: ["Os alunos", "estudaram muito", "para a prova", "a prova"],
     correct: 0,
-    explanation: "O sujeito é o termo sobre o qual o predicado faz uma declaração. Na oração, <strong>Os alunos</strong> é quem pratica a ação de estudar — portanto, é o sujeito simples."
+    explanation: "<strong>Sujeito</strong> é o termo sobre o qual o predicado faz uma declaração. Perguntamos ao verbo: <em>quem estudou?</em> → <strong>Os alunos</strong>. É um sujeito simples (um só núcleo)."
   },
   {
     category: "SUJEITO",
-    text: "Identifique o tipo de sujeito da oração:",
-    sentence: "Choveu muito durante a madrugada.",
-    options: ["Sujeito simples", "Sujeito composto", "Sujeito indeterminado", "Oração sem sujeito"],
-    correct: 3,
-    explanation: "Verbos que indicam fenômenos da natureza (chover, nevar, ventar etc.) são <strong>impessoais</strong> e formam <strong>orações sem sujeito</strong>. Não há quem pratique a ação — ela simplesmente ocorre."
-  },
-  {
-    category: "PREDICADO",
-    text: "Que tipo de predicado há na oração a seguir?",
-    sentence: "A professora parece cansada hoje.",
-    options: ["Predicado verbal", "Predicado nominal", "Predicado verbo-nominal", "Predicado adverbial"],
+    text: "Qual é o tipo de sujeito da oração?",
+    sentence: "João e Maria chegaram cedo à escola.",
+    options: ["Sujeito simples", "Sujeito composto", "Sujeito oculto", "Sujeito indeterminado"],
     correct: 1,
-    explanation: "<strong>Predicado nominal</strong> é aquele formado por verbo de ligação + predicativo do sujeito. O verbo <em>parece</em> é de ligação e <em>cansada</em> é o predicativo — nada é feito ou sofrido, apenas predicado um estado."
+    explanation: "<strong>Sujeito composto</strong> tem dois ou mais núcleos. Na oração, o sujeito é formado por <em>João</em> e <em>Maria</em> — dois núcleos ligados pela conjunção <em>e</em>."
   },
   {
-    category: "VOZ VERBAL",
-    text: "Passe a oração para a voz passiva analítica:",
-    sentence: "O diretor assinou os documentos.",
-    options: [
-      "Os documentos foram assinados pelo diretor.",
-      "Os documentos assinaram o diretor.",
-      "Assinaram-se os documentos pelo diretor.",
-      "Os documentos tinham sido assinados do diretor."
-    ],
+    category: "SUJEITO",
+    text: "O sujeito da oração está oculto (elíptico). Qual é ele?",
+    sentence: "Estudamos bastante para a prova de português.",
+    options: ["Nós", "Eles", "Vocês", "Eu"],
     correct: 0,
-    explanation: "Na <strong>voz passiva analítica</strong>: objeto direto → sujeito paciente; verbo auxiliar (ser) + particípio do verbo principal; sujeito agente → agente da passiva introduzido por <em>por/pelo/pela</em>."
-  },
-  {
-    category: "VOZ VERBAL",
-    text: "Qual oração está na voz passiva sintética (ou pronominal)?",
-    sentence: null,
-    options: [
-      "Alugam-se casas nesta rua.",
-      "Ele foi visto ontem.",
-      "A casa foi construída em 1990.",
-      "Venderam a loja rapidamente."
-    ],
-    correct: 0,
-    explanation: "<strong>Voz passiva sintética</strong> usa o pronome <em>se</em> como partícula apassivadora com verbo na 3.ª pessoa. Em <em>Alugam-se casas</em>, <em>casas</em> é o sujeito paciente e o agente fica indeterminado."
-  },
-  {
-    category: "AGENTE DA PASSIVA",
-    text: "Identifique o agente da passiva:",
-    sentence: "A cidade foi destruída pelo terremoto.",
-    options: ["A cidade", "foi destruída", "pelo terremoto", "terremoto"],
-    correct: 2,
-    explanation: "<strong>Agente da passiva</strong> é um termo da oração que indica o ser que pratica a ação expressa pelo verbo na voz passiva. É sempre introduzido pelas preposições <em>por, pelo, pela, pelos, pelas</em> (e raramente <em>de</em>). Não confunda com complemento nominal — este completa nomes, não verbos."
-  },
-  {
-    category: "OBJETO DIRETO",
-    text: "Qual é o objeto direto na oração a seguir?",
-    sentence: "Maria comprou flores amarelas para a mãe.",
-    options: ["Maria", "flores amarelas", "para a mãe", "comprou"],
-    correct: 1,
-    explanation: "<strong>Objeto direto</strong> é o complemento verbal sem preposição obrigatória. Aqui <em>flores amarelas</em> complementa o verbo <em>comprar</em> sem preposição. <em>Para a mãe</em> é objeto indireto."
-  },
-  {
-    category: "OBJETO INDIRETO",
-    text: "Identifique o objeto indireto:",
-    sentence: "O professor obedeceu às normas da escola.",
-    options: ["O professor", "obedeceu", "às normas da escola", "da escola"],
-    correct: 2,
-    explanation: "<strong>Objeto indireto</strong> é o complemento verbal exigido por meio de preposição. O verbo <em>obedecer</em> é transitivo indireto — exige preposição <em>a</em>. Logo, <em>às normas da escola</em> é o objeto indireto."
-  },
-  {
-    category: "ADJUNTO ADNOMINAL",
-    text: "Em qual alternativa há apenas adjunto adnominal?",
-    sentence: "A linda garota de olhos verdes entrou no salão.",
-    options: [
-      "A, linda, de olhos verdes",
-      "A, linda, no salão",
-      "de olhos verdes, no salão",
-      "no salão, entrou"
-    ],
-    correct: 0,
-    explanation: "<strong>Adjunto adnominal</strong> é o termo que modifica ou determina um substantivo. <em>A</em> (artigo), <em>linda</em> (adjetivo) e <em>de olhos verdes</em> (locução adjetiva) modificam <em>garota</em>. <em>No salão</em> é adjunto adverbial."
-  },
-  {
-    category: "ADJUNTO ADVERBIAL",
-    text: "Qual é a função do termo destacado?",
-    sentence: "Ele acordou <u>muito cedo</u> para pegar o ônibus.",
-    options: ["Adjunto adnominal", "Adjunto adverbial de tempo", "Complemento nominal", "Predicativo do sujeito"],
-    correct: 1,
-    explanation: "<strong>Muito cedo</strong> modifica o verbo <em>acordar</em> indicando tempo. Termos que modificam o verbo, adjetivo ou advérbio indicando circunstâncias (tempo, lugar, modo etc.) são <strong>adjuntos adverbiais</strong>."
-  },
-  {
-    category: "PREDICATIVO",
-    text: "Qual é o predicativo do sujeito na oração?",
-    sentence: "Os estudantes ficaram animados com o resultado.",
-    options: ["Os estudantes", "ficaram", "animados", "com o resultado"],
-    correct: 2,
-    explanation: "<strong>Predicativo do sujeito</strong> é o termo que, por meio de um verbo de ligação (<em>ficar</em>), atribui uma qualidade ou estado ao sujeito. <em>Animados</em> predica o estado de <em>os estudantes</em>."
-  },
-  {
-    category: "VOZ VERBAL",
-    text: "Qual é a voz verbal da oração:",
-    sentence: "A decisão foi tomada pela diretoria ontem.",
-    options: ["Voz ativa", "Voz passiva analítica", "Voz passiva sintética", "Voz reflexiva"],
-    correct: 1,
-    explanation: "A <strong>voz passiva analítica</strong> é formada por: verbo <em>ser</em> (auxiliar) + particípio do verbo principal (<em>tomada</em>). O sujeito (<em>a decisão</em>) sofre a ação e há agente da passiva (<em>pela diretoria</em>)."
+    explanation: "<strong>Sujeito oculto ou elíptico</strong> não aparece na oração, mas pode ser identificado pela desinência verbal. A terminação <em>-mos</em> do verbo <em>estudamos</em> indica a 1.ª pessoa do plural: <strong>nós</strong>."
   },
   {
     category: "SUJEITO",
     text: "Que tipo de sujeito há na oração?",
-    sentence: "Precisa-se de bons profissionais.",
+    sentence: "Choveu muito durante a madrugada.",
+    options: ["Sujeito simples", "Sujeito composto", "Sujeito indeterminado", "Oração sem sujeito"],
+    correct: 3,
+    explanation: "Verbos que indicam fenômenos da natureza (chover, nevar, ventar etc.) são impessoais e formam <strong>orações sem sujeito</strong>. Não há quem pratique a ação — ela simplesmente ocorre."
+  },
+  {
+    category: "SUJEITO",
+    text: "Que tipo de sujeito há na oração?",
+    sentence: "Venderam todos os ingressos do show.",
     options: ["Sujeito simples", "Sujeito composto", "Sujeito indeterminado", "Oração sem sujeito"],
     correct: 2,
-    explanation: "Com o pronome <em>se</em> como <strong>índice de indeterminação do sujeito</strong>, o verbo fica na 3.ª pessoa do singular e o sujeito não é identificado — é <strong>sujeito indeterminado</strong>. Difere da passiva sintética pois o verbo não tem sujeito explícito."
+    explanation: "Quando o verbo está na 3.ª pessoa do plural sem sujeito identificado, temos <strong>sujeito indeterminado</strong>. Não sabemos quem vendeu — a ação é praticada por alguém indefinido."
   },
+
+  // ── PREDICADO ────────────────────────────────────────
   {
-    category: "COMPLEMENTO NOMINAL",
-    text: "Identifique o complemento nominal:",
-    sentence: "Ela tem medo de altura.",
-    options: ["Ela", "medo", "de altura", "tem"],
-    correct: 2,
-    explanation: "<strong>Complemento nominal</strong> completa o sentido de um nome (substantivo, adjetivo ou advérbio) por meio de preposição. <em>De altura</em> completa o substantivo <em>medo</em> — indica o objeto do medo."
-  },
-  {
-    category: "APOSTO",
-    text: "Qual é a função sintática do trecho entre vírgulas?",
-    sentence: "Camões, o maior poeta português, viveu no século XVI.",
-    options: ["Vocativo", "Aposto", "Adjunto adnominal", "Predicativo do sujeito"],
+    category: "PREDICADO",
+    text: "Que tipo de predicado há na oração?",
+    sentence: "A professora parece cansada hoje.",
+    options: ["Predicado verbal", "Predicado nominal", "Predicado verbo-nominal", "Nenhuma das alternativas"],
     correct: 1,
-    explanation: "<strong>Aposto</strong> é o termo que explica, esclarece ou resume outro termo da oração. <em>O maior poeta português</em> esclarece quem é <em>Camões</em> — classifica-se como aposto explicativo."
+    explanation: "<strong>Predicado nominal</strong> é formado por verbo de ligação + predicativo do sujeito. O verbo <em>parece</em> é de ligação e <em>cansada</em> é o predicativo. Não há ação — apenas um estado atribuído ao sujeito."
+  },
+  {
+    category: "PREDICADO",
+    text: "Que tipo de predicado há na oração?",
+    sentence: "O cachorro correu pelo parque.",
+    options: ["Predicado verbal", "Predicado nominal", "Predicado verbo-nominal", "Nenhuma das alternativas"],
+    correct: 0,
+    explanation: "<strong>Predicado verbal</strong> tem como núcleo um verbo de ação (transitivo ou intransitivo). O verbo <em>correu</em> indica uma ação praticada pelo sujeito — não há predicativo do sujeito."
   },
   {
     category: "PREDICADO",
@@ -813,54 +737,128 @@ const questions = [
     sentence: "Os atletas chegaram cansados ao estádio.",
     options: ["Predicado verbal", "Predicado nominal", "Predicado verbo-nominal", "Nenhuma das alternativas"],
     correct: 2,
-    explanation: "<strong>Predicado verbo-nominal</strong> tem ao mesmo tempo um núcleo verbal (<em>chegaram</em>) e um predicativo (<em>cansados</em>, que indica o estado dos atletas ao praticar a ação). Há ação E estado simultâneos."
+    explanation: "<strong>Predicado verbo-nominal</strong> possui ao mesmo tempo um verbo de ação (<em>chegaram</em>) e um predicativo do sujeito (<em>cansados</em>). Há ação E estado simultâneos — por isso é verbo-nominal."
   },
+
+  // ── OBJETO DIRETO E INDIRETO ──────────────────────────
   {
-    category: "VOZ VERBAL",
-    text: "Transforme em voz ativa: \"Os livros foram lidos pelas crianças.\"",
-    sentence: null,
-    options: [
-      "As crianças leram os livros.",
-      "As crianças foram lidas pelos livros.",
-      "Os livros leram as crianças.",
-      "Leram-se os livros pelas crianças."
-    ],
-    correct: 0,
-    explanation: "Para passar da voz passiva analítica para a ativa: o agente da passiva (<em>pelas crianças</em>) torna-se sujeito; o sujeito paciente (<em>os livros</em>) torna-se objeto direto; o verbo volta à forma ativa (<em>leram</em>)."
+    category: "OBJETO DIRETO",
+    text: "Qual é o objeto direto na oração?",
+    sentence: "Maria comprou flores amarelas para a mãe.",
+    options: ["Maria", "flores amarelas", "para a mãe", "comprou"],
+    correct: 1,
+    explanation: "<strong>Objeto direto</strong> é o complemento verbal sem preposição. Perguntamos: <em>Maria comprou o quê?</em> → <em>flores amarelas</em>. Como não há preposição obrigatória, é objeto direto."
   },
   {
     category: "OBJETO DIRETO",
-    text: "Qual das orações contém objeto direto preposicionado?",
-    sentence: null,
-    options: [
-      "Amar a Deus sobre todas as coisas.",
-      "Ele gosta de chocolate.",
-      "Ela obedeceu ao pai.",
-      "Nós precisamos de ajuda."
-    ],
-    correct: 0,
-    explanation: "<strong>Objeto direto preposicionado</strong> ocorre quando o verbo transitivo direto exige objeto com preposição por razão semântica ou estilística (não por exigência do verbo). <em>A Deus</em> é objeto direto com preposição — o verbo <em>amar</em> é transitivo direto."
+    text: "Qual é o objeto direto na oração?",
+    sentence: "O menino chutou a bola com força.",
+    options: ["O menino", "a bola", "com força", "chutou"],
+    correct: 1,
+    explanation: "Perguntamos ao verbo: <em>chutou o quê?</em> → <strong>a bola</strong>. Sem preposição obrigatória, é <strong>objeto direto</strong>. <em>Com força</em> é adjunto adverbial de modo."
+  },
+  {
+    category: "OBJETO INDIRETO",
+    text: "Qual é o objeto indireto na oração?",
+    sentence: "Ela entregou o presente ao professor.",
+    options: ["Ela", "o presente", "ao professor", "entregou"],
+    correct: 2,
+    explanation: "<strong>Objeto indireto</strong> é o complemento verbal introduzido por preposição. Perguntamos: <em>entregou a quem?</em> → <em>ao professor</em> (preposição <em>a</em>). O objeto direto é <em>o presente</em>."
+  },
+  {
+    category: "OBJETO INDIRETO",
+    text: "Qual é o objeto indireto na oração?",
+    sentence: "Pedro gosta muito de futebol.",
+    options: ["Pedro", "muito", "de futebol", "gosta"],
+    correct: 2,
+    explanation: "O verbo <em>gostar</em> é transitivo indireto — exige preposição <em>de</em>. Perguntamos: <em>gosta de quê?</em> → <strong>de futebol</strong>. É o objeto indireto."
+  },
+
+  // ── ADJUNTO ADNOMINAL ─────────────────────────────────
+  {
+    category: "ADJUNTO ADNOMINAL",
+    text: "Qual termo é adjunto adnominal na oração?",
+    sentence: "A bela casa amarela ficava no fim da rua.",
+    options: ["A bela casa amarela", "bela e amarela", "no fim da rua", "ficava"],
+    correct: 1,
+    explanation: "<strong>Adjunto adnominal</strong> é o termo que modifica um substantivo. <em>Bela</em> e <em>amarela</em> são adjetivos que caracterizam o substantivo <em>casa</em>. <em>No fim da rua</em> é adjunto adverbial de lugar."
+  },
+  {
+    category: "ADJUNTO ADNOMINAL",
+    text: "Qual é o adjunto adnominal do substantivo \"livro\" na oração?",
+    sentence: "Comprei um livro de aventuras muito interessante.",
+    options: ["Comprei", "um, de aventuras, muito interessante", "muito interessante", "de aventuras"],
+    correct: 1,
+    explanation: "Todos os termos que modificam <em>livro</em> são adjuntos adnominais: <em>um</em> (artigo), <em>de aventuras</em> (locução adjetiva) e <em>muito interessante</em> (locução adjetiva). Todos caracterizam ou determinam o substantivo."
+  },
+
+  // ── ADJUNTO ADVERBIAL ─────────────────────────────────
+  {
+    category: "ADJUNTO ADVERBIAL",
+    text: "Qual é a circunstância indicada pelo adjunto adverbial destacado?",
+    sentence: "Ela estudou <u>na biblioteca</u> durante a tarde.",
+    options: ["Tempo", "Modo", "Lugar", "Causa"],
+    correct: 2,
+    explanation: "<em>Na biblioteca</em> indica <strong>lugar</strong> — onde a ação aconteceu. Adjuntos adverbiais de lugar respondem à pergunta <em>onde?</em>. Já <em>durante a tarde</em> é adjunto adverbial de tempo."
   },
   {
     category: "ADJUNTO ADVERBIAL",
-    text: "Qual a circunstância expressa pelo adjunto adverbial destacado?",
-    sentence: "Ela agiu <u>com coragem</u> diante do perigo.",
-    options: ["Lugar", "Tempo", "Modo", "Causa"],
+    text: "Qual é a circunstância do adjunto adverbial destacado?",
+    sentence: "Ele respondeu à pergunta <u>com muita calma</u>.",
+    options: ["Tempo", "Lugar", "Modo", "Causa"],
     correct: 2,
-    explanation: "<em>Com coragem</em> indica <strong>modo</strong> — a maneira como a ação foi realizada. Adjuntos adverbiais de modo geralmente respondem à pergunta <em>como?</em> ou são introduzidos por locuções prepositivas que expressam maneira."
+    explanation: "<em>Com muita calma</em> indica <strong>modo</strong> — a maneira como a ação foi realizada. Adjuntos adverbiais de modo respondem à pergunta <em>como?</em>."
+  },
+
+  // ── VOZ VERBAL ────────────────────────────────────────
+  {
+    category: "VOZ VERBAL",
+    text: "Qual é a voz verbal da oração?",
+    sentence: "O jogador marcou o gol no último minuto.",
+    options: ["Voz ativa", "Voz passiva", "Voz reflexiva", "Nenhuma das alternativas"],
+    correct: 0,
+    explanation: "Na <strong>voz ativa</strong> o sujeito pratica a ação. <em>O jogador</em> é o sujeito agente — ele quem marcou. A estrutura é: sujeito agente + verbo + objeto direto."
   },
   {
-    category: "ANÁLISE COMPLETA",
-    text: "Analise os termos da oração e marque a alternativa correta:",
-    sentence: "O médico receitou o remédio ao paciente.",
+    category: "VOZ VERBAL",
+    text: "Qual é a voz verbal da oração?",
+    sentence: "O gol foi marcado pelo jogador.",
+    options: ["Voz ativa", "Voz passiva analítica", "Voz reflexiva", "Nenhuma das alternativas"],
+    correct: 1,
+    explanation: "Na <strong>voz passiva analítica</strong> o sujeito sofre a ação. <em>O gol</em> é o sujeito paciente; o verbo é formado por <em>ser</em> + particípio (<em>foi marcado</em>); e <em>pelo jogador</em> é o agente da passiva."
+  },
+  {
+    category: "VOZ VERBAL",
+    text: "Transforme para a voz passiva: \"A diretora assinou os documentos.\"",
+    sentence: null,
     options: [
-      "Sujeito: O médico | OD: o remédio | OI: ao paciente",
-      "Sujeito: O médico | OD: ao paciente | OI: o remédio",
-      "Sujeito: o remédio | OD: O médico | OI: ao paciente",
-      "Sujeito: O médico | Predicativo: o remédio | OI: ao paciente"
+      "Os documentos foram assinados pela diretora.",
+      "Os documentos assinaram a diretora.",
+      "A diretora foi assinada pelos documentos.",
+      "Assinaram os documentos a diretora."
     ],
     correct: 0,
-    explanation: "O verbo <em>receitar</em> é transitivo direto e indireto. <em>O médico</em> é o sujeito (agente da ação); <em>o remédio</em> é o <strong>objeto direto</strong> (sem preposição); <em>ao paciente</em> é o <strong>objeto indireto</strong> (com preposição <em>a</em>)."
+    explanation: "Para passar à <strong>voz passiva</strong>: o objeto direto (<em>os documentos</em>) vira sujeito paciente; o verbo usa <em>ser</em> + particípio (<em>foram assinados</em>); o sujeito original vira agente da passiva (<em>pela diretora</em>)."
+  },
+
+  // ── AGENTE DA PASSIVA ─────────────────────────────────
+  {
+    category: "AGENTE DA PASSIVA",
+    text: "Identifique o agente da passiva na oração:",
+    sentence: "A redação foi corrigida pela professora.",
+    options: ["A redação", "foi corrigida", "pela professora", "professora"],
+    correct: 2,
+    explanation: "<strong>Agente da passiva</strong> é quem pratica a ação em uma oração na voz passiva. É introduzido pelas preposições <em>por/pelo/pela</em>. Aqui, <em>pela professora</em> indica quem corrigiu a redação."
+  },
+
+  // ── PREDICATIVO DO SUJEITO ────────────────────────────
+  {
+    category: "PREDICATIVO DO SUJEITO",
+    text: "Qual é o predicativo do sujeito na oração?",
+    sentence: "Os estudantes ficaram animados com o resultado.",
+    options: ["Os estudantes", "ficaram", "animados", "com o resultado"],
+    correct: 2,
+    explanation: "<strong>Predicativo do sujeito</strong> é o termo que atribui uma qualidade ou estado ao sujeito por meio de um verbo de ligação. O verbo <em>ficar</em> é de ligação e <em>animados</em> predica o estado dos estudantes."
   }
 ];
 
@@ -1098,3 +1096,27 @@ function goHome() {
 </script>
 </body>
 </html>
+   <div class="review-q">${i+1}. ${sentence}${q.text}</div>
+      <div class="review-a">
+        ${ok ? '' : `<em>${q.options[answers[i] === false && !ok ? document.querySelectorAll('.option-btn') : 0]?.textContent || '—'}</em>`}
+        Resposta correta: <strong>${q.options[q.correct]}</strong>
+      </div>`;
+    reviewItems.appendChild(div);
+  });
+}
+
+function toggleReview() {
+  const list = document.getElementById('review-list');
+  list.classList.toggle('open');
+  if (list.classList.contains('open')) {
+    list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function goHome() {
+  showScreen('screen-home');
+}
+</script>
+</body>
+</html>
+
