@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise Sintática — Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2430;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #8a6f2e;
+    --cream: #f0e6d0;
+    --cream-dim: #b8a882;
+    --red: #c0392b;
+    --green: #1a7a4a;
+    --green-light: #27ae6a;
+    --text: #e8dcc8;
+    --text-dim: #7a6e5e;
+    --border: #2d3748;
+    --border-gold: rgba(201,168,76,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* Decorative corner lines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 16px;
+    border: 1px solid var(--border-gold);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; width: 100%; max-width: 760px; animation: fadeIn 0.5s ease; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform: translateY(14px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ===== HOME SCREEN ===== */
+  .home-ornament {
+    font-family: 'IM Fell English', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .home-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 900;
+    line-height: 1.0;
+    text-align: center;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .home-title span {
+    display: block;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 0.65em;
+  }
+
+  .home-subtitle {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    color: var(--cream-dim);
+    font-size: 1.05rem;
+    margin: 20px 0 44px;
+    text-align: center;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 44px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border-gold));
+  }
+  .divider::after { background: linear-gradient(to left, transparent, var(--border-gold)); }
+  .divider-icon { color: var(--gold); font-size: 1.1rem; }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 560px;
+    margin-bottom: 40px;
+  }
+
+  .topic-badge {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: var(--cream-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topic-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .btn-start {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 16px 56px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-start::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-start:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+  .btn-start:hover::before { transform: translateX(100%); }
+  .btn-start:active { transform: translateY(0); }
+
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 40px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+  .stats-row span { display: flex; align-items: center; gap: 6px; }
+
+  /* ===== QUIZ SCREEN ===== */
+  .progress-bar-wrap {
+    width: 100%;
+    max-width: 760px;
+    margin-bottom: 32px;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .progress-meta .q-counter {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold);
+  }
+  .score-badge {
+    background: var(--surface);
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    color: var(--gold);
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold-dim), var(--gold));
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 36px 40px;
+    width: 100%;
+    max-width: 760px;
+    position: relative;
+    overflow: hidden;
+  }
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .q-category {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    line-height: 1.65;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .q-sentence {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--gold-light);
+    background: rgba(201,168,76,0.06);
+    border-left: 3px solid var(--gold-dim);
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0 28px;
+    line-height: 1.7;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    transition: all 0.18s;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .option-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--gold-dim);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--gold-dim);
+    background: rgba(201,168,76,0.07);
+    transform: translateY(-1px);
+  }
+  .option-btn.correct {
+    background: rgba(26,122,74,0.18);
+    border-color: var(--green-light);
+    color: #a8f0c6;
+  }
+  .option-btn.correct .option-letter { color: var(--green-light); }
+  .option-btn.wrong {
+    background: rgba(192,57,43,0.15);
+    border-color: #c0392b;
+    color: #f0a0a0;
+  }
+  .option-btn.wrong .option-letter { color: #e07070; }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback-panel {
+    margin-top: 24px;
+    padding: 18px 22px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .feedback-panel.show { display: block; }
+  .feedback-panel.ok {
+    background: rgba(26,122,74,0.12);
+    border: 1px solid rgba(39,174,106,0.4);
+    color: #b8f0d0;
+  }
+  .feedback-panel.nok {
+    background: rgba(192,57,43,0.1);
+    border: 1px solid rgba(192,57,43,0.4);
+    color: #f0c0c0;
+  }
+  .feedback-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-next {
+    margin-top: 28px;
+    align-self: flex-end;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    padding: 11px 36px;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+  }
+  .btn-next.show { display: block; }
+  .btn-next:hover { background: var(--gold); color: var(--bg); }
+
+  /* ===== RESULT SCREEN ===== */
+  .result-seal {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 32px;
+    position: relative;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    animation: sealPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes sealPop {
+    from { transform: scale(0); opacity:0; }
+    to { transform: scale(1); opacity:1; }
+  }
+  .result-seal::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    border: 1px solid var(--border-gold);
+  }
+  .result-score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .result-score-denom {
+    font-size: 0.8rem;
+    color: var(--gold-dim);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 900;
+    color: var(--cream);
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .result-message {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    color: var(--cream-dim);
+    text-align: center;
+    font-size: 1.05rem;
+    margin-bottom: 40px;
+  }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 520px;
+    margin-bottom: 44px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .stat-box .val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-box .lbl {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  .btn-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 13px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--gold-dim); color: var(--cream); }
+
+  /* Review list */
+  .review-list {
+    width: 100%;
+    max-width: 760px;
+    margin-top: 40px;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .review-list.open { display: block; }
+  .review-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--cream);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
+  }
+  .review-item.ok { border-left: 3px solid var(--green); }
+  .review-item.nok { border-left: 3px solid var(--red); }
+  .review-q {
+    font-size: 0.88rem;
+    color: var(--cream-dim);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .review-a {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .review-a strong { color: var(--green-light); }
+  .review-a em { color: #e07070; text-decoration: line-through; margin-right: 6px; }
+
+  /* Streak indicator */
+  .streak-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .streak-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .streak-dot.ok { background: var(--green-light); }
+  .streak-dot.nok { background: var(--red); }
+
+  @media (max-width: 580px) {
+    .options-grid { grid-template-columns: 1fr; }
+    .topics-grid { grid-template-columns: 1fr; }
+    .question-card { padding: 24px 20px; }
+    .result-stats { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HOME SCREEN -->
+  <section class="screen active" id="screen-home">
+    <div class="home-ornament">Gramática Portuguesa</div>
+    <h1 class="home-title">
+      Análise
+      <span>Sintática</span>
+    </h1>
+    <p class="home-subtitle">Prove o seu domínio das estruturas da língua</p>
+
+    <div class="divider"><span class="divider-icon">✦</span></div>
+
+    <div class="topics-grid">
+      <div class="topic-badge"><span class="dot"></span>Sujeito & Predicado</div>
+      <div class="topic-badge"><span class="dot"></span>Objeto Direto e Indireto</div>
+      <div class="topic-badge"><span class="dot"></span>Voz Ativa e Passiva</div>
+      <div class="topic-badge"><span class="dot"></span>Complemento Nominal</div>
+      <div class="topic-badge"><span class="dot"></span>Adjunto Adnominal</div>
+      <div class="topic-badge"><span class="dot"></span>Adjunto Adverbial</div>
+      <div class="topic-badge"><span class="dot"></span>Agente da Passiva</div>
+      <div class="topic-badge"><span class="dot"></span>Predicativo do Sujeito</div>
+    </div>
+
+    <button class="btn-start" onclick="startQuiz()">Iniciar Quiz</button>
+
+    <div class="stats-row">
+      <span>📝 20 questões</span>
+      <span>⏱ Sem limite de tempo</span>
+      <span>📚 Nível médio–avançado</span>
+    </div>
+  </section>
+
+  <!-- QUIZ SCREEN -->
+  <section class="screen" id="screen-quiz">
+    <div class="progress-bar-wrap">
+      <div class="progress-meta">
+        <span class="q-counter" id="q-counter">1 / 20</span>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="streak-bar" id="streak-bar"></div>
+          <span class="score-badge" id="score-badge">0 pts</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:5%"></div></div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="q-category" id="q-category">CATEGORIA</div>
+      <div class="q-text" id="q-text">Pergunta aqui</div>
+      <div class="q-sentence" id="q-sentence" style="display:none"></div>
+      <div class="options-grid" id="options-grid"></div>
+      <div class="feedback-panel" id="feedback-panel">
+        <div class="feedback-title" id="feedback-title"></div>
+        <div id="feedback-body"></div>
+      </div>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima →</button>
+  </section>
+
+  <!-- RESULT SCREEN -->
+  <section class="screen" id="screen-result">
+    <div class="result-seal">
+      <span class="result-score-num" id="res-num">0</span>
+      <span class="result-score-denom" id="res-denom">de 20</span>
+    </div>
+    <h2 class="result-title" id="res-title">Parabéns!</h2>
+    <p class="result-message" id="res-message">Mensagem aqui</p>
+    <div class="result-stats">
+      <div class="stat-box"><span class="val" id="res-correct">0</span><div class="lbl">Corretas</div></div>
+      <div class="stat-box"><span class="val" id="res-wrong">0</span><div class="lbl">Erradas</div></div>
+      <div class="stat-box"><span class="val" id="res-pct">0%</span><div class="lbl">Aproveit.</div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-start" onclick="startQuiz()">Jogar Novamente</button>
+      <button class="btn-secondary" onclick="toggleReview()">Ver Gabarito</button>
+      <button class="btn-secondary" onclick="goHome()">Início</button>
+    </div>
+    <div class="review-list" id="review-list">
+      <div class="review-title">Gabarito Completo</div>
+      <div id="review-items"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const questions = [
+  {
+    category: "SUJEITO",
+    text: "Qual é o sujeito da oração a seguir?",
+    sentence: "Os alunos estudaram muito para a prova.",
+    options: ["Os alunos", "estudaram muito", "para a prova", "a prova"],
+    correct: 0,
+    explanation: "O sujeito é o termo sobre o qual o predicado faz uma declaração. Na oração, <strong>Os alunos</strong> é quem pratica a ação de estudar — portanto, é o sujeito simples."
+  },
+  {
+    category: "SUJEITO",
+    text: "Identifique o tipo de sujeito da oração:",
+    sentence: "Choveu muito durante a madrugada.",
+    options: ["Sujeito simples", "Sujeito composto", "Sujeito indeterminado", "Oração sem sujeito"],
+    correct: 3,
+    explanation: "Verbos que indicam fenômenos da natureza (chover, nevar, ventar etc.) são <strong>impessoais</strong> e formam <strong>orações sem sujeito</strong>. Não há quem pratique a ação — ela simplesmente ocorre."
+  },
+  {
+    category: "PREDICADO",
+    text: "Que tipo de predicado há na oração a seguir?",
+    sentence: "A professora parece cansada hoje.",
+    options: ["Predicado verbal", "Predicado nominal", "Predicado verbo-nominal", "Predicado adverbial"],
+    correct: 1,
+    explanation: "<strong>Predicado nominal</strong> é aquele formado por verbo de ligação + predicativo do sujeito. O verbo <em>parece</em> é de ligação e <em>cansada</em> é o predicativo — nada é feito ou sofrido, apenas predicado um estado."
+  },
+  {
+    category: "VOZ VERBAL",
+    text: "Passe a oração para a voz passiva analítica:",
+    sentence: "O diretor assinou os documentos.",
+    options: [
+      "Os documentos foram assinados pelo diretor.",
+      "Os documentos assinaram o diretor.",
+      "Assinaram-se os documentos pelo diretor.",
+      "Os documentos tinham sido assinados do diretor."
+    ],
+    correct: 0,
+    explanation: "Na <strong>voz passiva analítica</strong>: objeto direto → sujeito paciente; verbo auxiliar (ser) + particípio do verbo principal; sujeito agente → agente da passiva introduzido por <em>por/pelo/pela</em>."
+  },
+  {
+    category: "VOZ VERBAL",
+    text: "Qual oração está na voz passiva sintética (ou pronominal)?",
+    sentence: null,
+    options: [
+      "Alugam-se casas nesta rua.",
+      "Ele foi visto ontem.",
+      "A casa foi construída em 1990.",
+      "Venderam a loja rapidamente."
+    ],
+    correct: 0,
+    explanation: "<strong>Voz passiva sintética</strong> usa o pronome <em>se</em> como partícula apassivadora com verbo na 3.ª pessoa. Em <em>Alugam-se casas</em>, <em>casas</em> é o sujeito paciente e o agente fica indeterminado."
+  },
+  {
+    category: "AGENTE DA PASSIVA",
+    text: "Identifique o agente da passiva:",
+    sentence: "A cidade foi destruída pelo terremoto.",
+    options: ["A cidade", "foi destruída", "pelo terremoto", "terremoto"],
+    correct: 2,
+    explanation: "<strong>Agente da passiva</strong> é o complemento nominal do verbo na voz passiva — indica quem pratica a ação sobre o sujeito paciente. É introduzido pelas preposições <em>por, pelo, pela, pelos, pelas</em>."
+  },
+  {
+    category: "OBJETO DIRETO",
+    text: "Qual é o objeto direto na oração a seguir?",
+    sentence: "Maria comprou flores amarelas para a mãe.",
+    options: ["Maria", "flores amarelas", "para a mãe", "comprou"],
+    correct: 1,
+    explanation: "<strong>Objeto direto</strong> é o complemento verbal sem preposição obrigatória. Aqui <em>flores amarelas</em> complementa o verbo <em>comprar</em> sem preposição. <em>Para a mãe</em> é objeto indireto."
+  },
+  {
+    category: "OBJETO INDIRETO",
+    text: "Identifique o objeto indireto:",
+    sentence: "O professor obedeceu às normas da escola.",
+    options: ["O professor", "obedeceu", "às normas da escola", "da escola"],
+    correct: 2,
+    explanation: "<strong>Objeto indireto</strong> é o complemento verbal exigido por meio de preposição. O verbo <em>obedecer</em> é transitivo indireto — exige preposição <em>a</em>. Logo, <em>às normas da escola</em> é o objeto indireto."
+  },
+  {
+    category: "ADJUNTO ADNOMINAL",
+    text: "Em qual alternativa há apenas adjunto adnominal?",
+    sentence: "A linda garota de olhos verdes entrou no salão.",
+    options: [
+      "A, linda, de olhos verdes",
+      "A, linda, no salão",
+      "de olhos verdes, no salão",
+      "no salão, entrou"
+    ],
+    correct: 0,
+    explanation: "<strong>Adjunto adnominal</strong> é o termo que modifica ou determina um substantivo. <em>A</em> (artigo), <em>linda</em> (adjetivo) e <em>de olhos verdes</em> (locução adjetiva) modificam <em>garota</em>. <em>No salão</em> é adjunto adverbial."
+  },
+  {
+    category: "ADJUNTO ADVERBIAL",
+    text: "Qual é a função do termo destacado?",
+    sentence: "Ele acordou <u>muito cedo</u> para pegar o ônibus.",
+    options: ["Adjunto adnominal", "Adjunto adverbial de tempo", "Complemento nominal", "Predicativo do sujeito"],
+    correct: 1,
+    explanation: "<strong>Muito cedo</strong> modifica o verbo <em>acordar</em> indicando tempo. Termos que modificam o verbo, adjetivo ou advérbio indicando circunstâncias (tempo, lugar, modo etc.) são <strong>adjuntos adverbiais</strong>."
+  },
+  {
+    category: "PREDICATIVO",
+    text: "Qual é o predicativo do sujeito na oração?",
+    sentence: "Os estudantes ficaram animados com o resultado.",
+    options: ["Os estudantes", "ficaram", "animados", "com o resultado"],
+    correct: 2,
+    explanation: "<strong>Predicativo do sujeito</strong> é o termo que, por meio de um verbo de ligação (<em>ficar</em>), atribui uma qualidade ou estado ao sujeito. <em>Animados</em> predica o estado de <em>os estudantes</em>."
+  },
+  {
+    category: "VOZ VERBAL",
+    text: "Qual é a voz verbal da oração:",
+    sentence: "A decisão foi tomada pela diretoria ontem.",
+    options: ["Voz ativa", "Voz passiva analítica", "Voz passiva sintética", "Voz reflexiva"],
+    correct: 1,
+    explanation: "A <strong>voz passiva analítica</strong> é formada por: verbo <em>ser</em> (auxiliar) + particípio do verbo principal (<em>tomada</em>). O sujeito (<em>a decisão</em>) sofre a ação e há agente da passiva (<em>pela diretoria</em>)."
+  },
+  {
+    category: "SUJEITO",
+    text: "Que tipo de sujeito há na oração?",
+    sentence: "Precisa-se de bons profissionais.",
+    options: ["Sujeito simples", "Sujeito composto", "Sujeito indeterminado", "Oração sem sujeito"],
+    correct: 2,
+    explanation: "Com o pronome <em>se</em> como <strong>índice de indeterminação do sujeito</strong>, o verbo fica na 3.ª pessoa do singular e o sujeito não é identificado — é <strong>sujeito indeterminado</strong>. Difere da passiva sintética pois o verbo não tem sujeito explícito."
+  },
+  {
+    category: "COMPLEMENTO NOMINAL",
+    text: "Identifique o complemento nominal:",
+    sentence: "Ela tem medo de altura.",
+    options: ["Ela", "medo", "de altura", "tem"],
+    correct: 2,
+    explanation: "<strong>Complemento nominal</strong> completa o sentido de um nome (substantivo, adjetivo ou advérbio) por meio de preposição. <em>De altura</em> completa o substantivo <em>medo</em> — indica o objeto do medo."
+  },
+  {
+    category: "APOSTO",
+    text: "Qual é a função sintática do trecho entre vírgulas?",
+    sentence: "Camões, o maior poeta português, viveu no século XVI.",
+    options: ["Vocativo", "Aposto", "Adjunto adnominal", "Predicativo do sujeito"],
+    correct: 1,
+    explanation: "<strong>Aposto</strong> é o termo que explica, esclarece ou resume outro termo da oração. <em>O maior poeta português</em> esclarece quem é <em>Camões</em> — classifica-se como aposto explicativo."
+  },
+  {
+    category: "PREDICADO",
+    text: "Que tipo de predicado há na oração?",
+    sentence: "Os atletas chegaram cansados ao estádio.",
+    options: ["Predicado verbal", "Predicado nominal", "Predicado verbo-nominal", "Nenhuma das alternativas"],
+    correct: 2,
+    explanation: "<strong>Predicado verbo-nominal</strong> tem ao mesmo tempo um núcleo verbal (<em>chegaram</em>) e um predicativo (<em>cansados</em>, que indica o estado dos atletas ao praticar a ação). Há ação E estado simultâneos."
+  },
+  {
+    category: "VOZ VERBAL",
+    text: "Transforme em voz ativa: \"Os livros foram lidos pelas crianças.\"",
+    sentence: null,
+    options: [
+      "As crianças leram os livros.",
+      "As crianças foram lidas pelos livros.",
+      "Os livros leram as crianças.",
+      "Leram-se os livros pelas crianças."
+    ],
+    correct: 0,
+    explanation: "Para passar da voz passiva analítica para a ativa: o agente da passiva (<em>pelas crianças</em>) torna-se sujeito; o sujeito paciente (<em>os livros</em>) torna-se objeto direto; o verbo volta à forma ativa (<em>leram</em>)."
+  },
+  {
+    category: "OBJETO DIRETO",
+    text: "Qual das orações contém objeto direto preposicionado?",
+    sentence: null,
+    options: [
+      "Amar a Deus sobre todas as coisas.",
+      "Ele gosta de chocolate.",
+      "Ela obedeceu ao pai.",
+      "Nós precisamos de ajuda."
+    ],
+    correct: 0,
+    explanation: "<strong>Objeto direto preposicionado</strong> ocorre quando o verbo transitivo direto exige objeto com preposição por razão semântica ou estilística (não por exigência do verbo). <em>A Deus</em> é objeto direto com preposição — o verbo <em>amar</em> é transitivo direto."
+  },
+  {
+    category: "ADJUNTO ADVERBIAL",
+    text: "Qual a circunstância expressa pelo adjunto adverbial destacado?",
+    sentence: "Ela agiu <u>com coragem</u> diante do perigo.",
+    options: ["Lugar", "Tempo", "Modo", "Causa"],
+    correct: 2,
+    explanation: "<em>Com coragem</em> indica <strong>modo</strong> — a maneira como a ação foi realizada. Adjuntos adverbiais de modo geralmente respondem à pergunta <em>como?</em> ou são introduzidos por locuções prepositivas que expressam maneira."
+  },
+  {
+    category: "ANÁLISE COMPLETA",
+    text: "Analise os termos da oração e marque a alternativa correta:",
+    sentence: "O médico receitou o remédio ao paciente.",
+    options: [
+      "Sujeito: O médico | OD: o remédio | OI: ao paciente",
+      "Sujeito: O médico | OD: ao paciente | OI: o remédio",
+      "Sujeito: o remédio | OD: O médico | OI: ao paciente",
+      "Sujeito: O médico | Predicativo: o remédio | OI: ao paciente"
+    ],
+    correct: 0,
+    explanation: "O verbo <em>receitar</em> é transitivo direto e indireto. <em>O médico</em> é o sujeito (agente da ação); <em>o remédio</em> é o <strong>objeto direto</strong> (sem preposição); <em>ao paciente</em> é o <strong>objeto indireto</strong> (com preposição <em>a</em>)."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answers = [];
+let shuffled = [];
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function startQuiz() {
+  current = 0;
+  score = 0;
+  answers = [];
+  shuffled = shuffle(questions);
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion() {
+  const q = shuffled[current];
+  const total = shuffled.length;
+
+  document.getElementById('q-counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('progress-fill').style.width = `${((current + 1) / total) * 100}%`;
+  document.getElementById('score-badge').textContent = `${score} pts`;
+  document.getElementById('q-category').textContent = q.category;
+  document.getElementById('q-text').textContent = q.text;
+
+  const sentenceEl = document.getElementById('q-sentence');
+  if (q.sentence) {
+    sentenceEl.innerHTML = q.sentence;
+    sentenceEl.style.display = 'block';
+  } else {
+    sentenceEl.style.display = 'none';
+  }
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('feedback-panel').className = 'feedback-panel';
+  document.getElementById('btn-next').className = 'btn-next';
+
+  // Streak bar
+  const bar = document.getElementById('streak-bar');
+  bar.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'streak-dot' + (i < answers.length ? (answers[i] ? ' ok' : ' nok') : '');
+    bar.appendChild(dot);
+  }
+}
+
+function selectAnswer(idx) {
+  const q = shuffled[current];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  const correct = idx === q.correct;
+  answers.push(correct);
+  if (correct) score += 5;
+
+  buttons[q.correct].classList.add('correct');
+  if (!correct) buttons[idx].classList.add('wrong');
+
+  const panel = document.getElementById('feedback-panel');
+  const title = document.getElementById('feedback-title');
+  const body = document.getElementById('feedback-body');
+
+  if (correct) {
+    panel.className = 'feedback-panel ok show';
+    title.innerHTML = '✓ Correto! +5 pontos';
+  } else {
+    panel.className = 'feedback-panel nok show';
+    title.innerHTML = '✗ Resposta incorreta';
+  }
+  body.innerHTML = q.explanation;
+
+  document.getElementById('btn-next').className = 'btn-next show';
+  document.getElementById('score-badge').textContent = `${score} pts`;
+
+  // Update streak dot
+  const dots = document.querySelectorAll('.streak-dot');
+  if (dots[current]) {
+    dots[current].className = 'streak-dot ' + (correct ? 'ok' : 'nok');
+  }
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= shuffled.length) {
+    showResults();
+  } else {
+    // Re-animate card
+    const card = document.getElementById('question-card');
+    card.style.animation = 'none';
+    requestAnimationFrame(() => {
+      card.style.animation = 'fadeIn 0.35s ease';
+      renderQuestion();
+    });
+  }
+}
+
+function showResults() {
+  showScreen('screen-result');
+  const total = shuffled.length;
+  const correct = answers.filter(Boolean).length;
+  const wrong = total - correct;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('res-num').textContent = score;
+  document.getElementById('res-denom').textContent = `de ${total * 5} pts`;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-pct').textContent = pct + '%';
+
+  let title, msg;
+  if (pct >= 90) { title = 'Mestre da Sintaxe!'; msg = 'Seu domínio da análise sintática é excepcional.'; }
+  else if (pct >= 75) { title = 'Excelente!'; msg = 'Você domina bem as estruturas da língua portuguesa.'; }
+  else if (pct >= 60) { title = 'Muito Bom!'; msg = 'Boa base — alguns conceitos ainda merecem revisão.'; }
+  else if (pct >= 40) { title = 'Continue Praticando'; msg = 'Revise os tópicos errados e tente novamente.'; }
+  else { title = 'Não Desanime!'; msg = 'A análise sintática pede prática constante. Revise e tente de novo.'; }
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-message').textContent = msg;
+
+  // Build review
+  const reviewItems = document.getElementById('review-items');
+  reviewItems.innerHTML = '';
+  shuffled.forEach((q, i) => {
+    const ok = answers[i];
+    const div = document.createElement('div');
+    div.className = 'review-item ' + (ok ? 'ok' : 'nok');
+    const sentence = q.sentence ? `<em>"${q.sentence}"</em> — ` : '';
+    div.innerHTML = `
+      <div class="review-q">${i+1}. ${sentence}${q.text}</div>
+      <div class="review-a">
+        ${ok ? '' : `<em>${q.options[answers[i] === false && !ok ? document.querySelectorAll('.option-btn') : 0]?.textContent || '—'}</em>`}
+        Resposta correta: <strong>${q.options[q.correct]}</strong>
+      </div>`;
+    reviewItems.appendChild(div);
+  });
+}
+
+function toggleReview() {
+  const list = document.getElementById('review-list');
+  list.classList.toggle('open');
+  if (list.classList.contains('open')) {
+    list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function goHome() {
+  showScreen('screen-home');
+}
+</script>
+</body>
+</html>
